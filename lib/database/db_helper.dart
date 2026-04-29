@@ -27,7 +27,7 @@ class DBHelper {
     await db.execute('''
     CREATE TABLE IF NOT EXISTS users (
       user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username UNIQUE TEXT NOT NULL,
+      username TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
       gender TEXT CHECK(gender IN ('male', 'female', 'unknown')),
       tanggal_lahir TEXT
