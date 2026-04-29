@@ -95,4 +95,16 @@ class CheckinController {
         .map((e) => e['datetime'].toString().substring(0, 10))
         .toList();
   }
+
+  Future<List<Map<String, dynamic>>> getLast7Days(int userId) async {
+    final db = await _dbHelper.database;
+
+    return await db.query(
+      'checkin',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'datetime DESC',
+      limit: 7,
+    );
+  }
 }

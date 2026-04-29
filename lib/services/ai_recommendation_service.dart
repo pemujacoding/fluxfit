@@ -4,16 +4,22 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AiRecommendationService {
   final String _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-
   final String _baseUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
+
   Future<String> getRecommendation({
+    required List<Map<String, dynamic>> checkInHistory,
+    required List<Map<String, dynamic>> joggingHistory,
     required List<Map<String, dynamic>> kalisthenicHistory,
   }) async {
     try {
       if (_apiKey.isEmpty) return "API Key tidak ditemukan di .env";
 
-      final prompt = _buildPrompt(kalisthenicHistory: kalisthenicHistory);
+      final prompt = _buildPrompt(
+        checkInHistory: checkInHistory,
+        joggingHistory: joggingHistory,
+        kalisthenicHistory: kalisthenicHistory,
+      );
 
       final response = await http.post(
         Uri.parse("$_baseUrl?key=$_apiKey"),
@@ -43,15 +49,57 @@ class AiRecommendationService {
   }
 
   String _buildPrompt({
+    required List<Map<String, dynamic>> checkInHistory,
+    required List<Map<String, dynamic>> joggingHistory,
     required List<Map<String, dynamic>> kalisthenicHistory,
   }) {
-    // ... (samakan dengan kode buildPrompt kamu yang lama) ...
-    final summary = kalisthenicHistory.isEmpty
-        ? "Belum ada sesi"
-        : kalisthenicHistory
-              .map((e) => "- ${e['level_nama']}, progress ${e['progress']}%")
+    final checkInSummary = checkInHistory.isEmpty
+        ? "Belum ada check-in"
+        : "${checkInHistory.length} hari check-in tercatat, "
+              "terakhir: ${checkInHistory.first['datetime']}";
+
+    final joggingSummary = joggingHistory.isEmpty
+        ? "Belum ada sesi jogging"
+        : joggingHistory
+              .map((e) {
+                final jarak = e['jarak'] != null
+                    ? "${e['jarak']} km"
+                    : "jarak tidak tercatat";
+                final langkah = e['langkah'] != null
+                    ? "${e['langkah']} langkah"
+                    : "";
+                return "- ${e['datetime']}: $jarak${langkah.isNotEmpty ? ', $langkah' : ''}";
+              })
               .join('\n');
 
-    return "Kamu adalah coach fitness FluxFit. Berikan analisis dan motivasi singkat untuk data ini:\n$summary";
+    final kalisthenicSummary = kalisthenicHistory.isEmpty
+        ? "Belum ada sesi kalistenik"
+        : kalisthenicHistory
+              .map(
+                (e) =>
+                    "- ${e['datetime']}: level ${e['level_nama']}, selesai ${e['progress']}%",
+              )
+              .join('\n');
+
+    return """
+Kamu adalah AI fitness coach aplikasi FluxFit. Analisis data latihan pengguna berikut dan berikan rekomendasi personal.
+
+CHECK-IN (7 hari terakhir):
+$checkInSummary
+
+JOGGING (3 sesi terakhir):
+$joggingSummary
+
+KALISTENIK (3 sesi terakhir):
+$kalisthenicSummary
+
+Balas dalam format ini, singkat dan langsung ke poin:
+📊 ANALISIS: (2 kalimat ringkasan performa)
+🏃 JOGGING: (saran sesi berikutnya berdasarkan data)
+💪 KALISTENIK: (saran sesuai level dan progress)
+🔥 MOTIVASI: (1 kalimat motivasi personal)
+
+Bahasa Indonesia, ramah, tidak bertele-tele.
+""";
   }
 }

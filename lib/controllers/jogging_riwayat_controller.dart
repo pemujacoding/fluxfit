@@ -37,6 +37,18 @@ class JoggingRiwayatController {
     );
   }
 
+  // ambil 3 sesi terakhir
+  Future<List<Map<String, dynamic>>> getLast3Sessions(int userId) async {
+    final db = await _dbHelper.database;
+    return await db.query(
+      'jogging_riwayat',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'datetime DESC',
+      limit: 3,
+    );
+  }
+
   // 🔥 UPDATE
   Future<int> updateJogging(JoggingRiwayat jogging) async {
     final db = await _dbHelper.database;

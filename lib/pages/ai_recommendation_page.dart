@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluxfit/controllers/checkin_controller.dart';
+import 'package:fluxfit/controllers/jogging_riwayat_controller.dart';
 import 'package:fluxfit/controllers/kalistenik_riwayat_controller.dart';
 import 'package:fluxfit/session/session_helper.dart';
 import 'package:fluxfit/services/ai_recommendation_service.dart';
@@ -11,7 +13,10 @@ class AiRecommendationPage extends StatefulWidget {
 }
 
 class _AiRecommendationPageState extends State<AiRecommendationPage> {
-  final KalisteniRiwayatController _kalisthenicController =
+  final CheckinController _checkinController = CheckinController();
+  final JoggingRiwayatController _joggingRiwayatController =
+      JoggingRiwayatController();
+  final KalisteniRiwayatController _kalisthenicRiwayatController =
       KalisteniRiwayatController();
   final AiRecommendationService _aiService = AiRecommendationService();
 
@@ -35,12 +40,15 @@ class _AiRecommendationPageState extends State<AiRecommendationPage> {
       final userId = await SessionHelper.getUserId();
       if (userId == null) throw Exception('User tidak ditemukan');
 
-      // Ambil 3 sesi terakhir kalistenik
-      final calisthenics = await _kalisthenicController.getLast3Sessions(
+      final checkIns = await _checkinController.getLast7Days(userId);
+      final jogging = await _joggingRiwayatController.getLast3Sessions(userId);
+      final calisthenics = await _kalisthenicRiwayatController.getLast3Sessions(
         userId,
       );
 
       final result = await _aiService.getRecommendation(
+        checkInHistory: checkIns,
+        joggingHistory: jogging,
         kalisthenicHistory: calisthenics,
       );
 

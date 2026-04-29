@@ -33,9 +33,8 @@ class KalisteniRiwayatController {
     );
   }
 
-Future<List<Map<String, dynamic>>> getLast3Sessions(int userId) async {
+  Future<List<Map<String, dynamic>>> getLast3Sessions(int userId) async {
     final db = await _dbHelper.database;
-
     return await db.rawQuery(
       '''
     SELECT 
@@ -51,6 +50,7 @@ Future<List<Map<String, dynamic>>> getLast3Sessions(int userId) async {
       [userId],
     );
   }
+
   Future<void> delete(int id) async {
     final db = await _dbHelper.database;
 
