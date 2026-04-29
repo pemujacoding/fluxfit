@@ -25,9 +25,50 @@ class _AiRecommendationPageState extends State<AiRecommendationPage> {
   String? _errorMessage;
 
   @override
+  @override
   void initState() {
     super.initState();
-    _loadRecommendation();
+  }
+
+  Widget _buildInitialState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.auto_awesome, size: 60, color: Colors.blueAccent),
+          const SizedBox(height: 20),
+
+          const Text(
+            "Siap dapetin rekomendasi latihan?",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "AI akan menganalisis check-in, jogging, dan kalistenik kamu",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+
+          const SizedBox(height: 30),
+
+          ElevatedButton.icon(
+            onPressed: _loadRecommendation, // 🔥 klik baru jalan
+            icon: const Icon(Icons.auto_awesome),
+            label: const Text("Generate Rekomendasi"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blueAccent,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadRecommendation() async {
@@ -79,6 +120,8 @@ class _AiRecommendationPageState extends State<AiRecommendationPage> {
             ? _buildLoadingState()
             : _errorMessage != null
             ? _buildErrorState()
+            : _recommendation == null
+            ? _buildInitialState() // 🔥 TAMBAH INI
             : _buildRecommendationContent(),
       ),
     );
