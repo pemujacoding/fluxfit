@@ -1,0 +1,29 @@
+name: fluxfit
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.1
+
+dependencies:
+  crypto: ^3.0.7
+  flutter:
+    sdk: flutter
+  intl: ^0.20.2
+  path: ^1.9.1
+  shared_preferences: ^2.5.5
+  sqflite: ^2.3.0
+  table_calendar: ^3.0.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  google_maps_flutter: ^2.6.0
+  geolocator: ^14.0.2
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/gifs/

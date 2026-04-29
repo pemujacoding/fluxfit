@@ -1,0 +1,27 @@
+    final int? id;
+    final String col;
+
+    Class({
+        this.id,
+        required this.col
+    });
+
+    //insert
+    Map<String, dynamic> toMap() {
+        final map = {
+            'id': id,
+            'col' : col
+        };
+        if (id != null) {
+            map['id'] = id!;
+        }
+        return map;
+    }
+
+    //get
+    factory Class.fromMap(Map<String, dynamic> map) {
+        return Class(
+            id: map['id'],
+            col : map['col']
+        );
+    }
