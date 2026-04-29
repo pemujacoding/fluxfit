@@ -47,7 +47,8 @@ class DBHelper {
     CREATE TABLE IF NOT EXISTS jogging_riwayat (
       jogging_id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      datetime TEXT NOT NULL,
+      datetime_start TEXT NOT NULL,
+      datetime_end,
       jarak REAL,
       langkah INTEGER,
       FOREIGN KEY (user_id) REFERENCES users(user_id)

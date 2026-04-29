@@ -1,14 +1,16 @@
 class JoggingRiwayat {
   final int? joggingId;
   final int userId;
-  final String datetime;
+  final String datetimeStart;
+  final String? datetimeEnd;
   final double? jarak;
   final int? langkah;
 
   JoggingRiwayat({
     this.joggingId,
     required this.userId,
-    required this.datetime,
+    required this.datetimeStart,
+    this.datetimeEnd,
     this.jarak,
     this.langkah,
   });
@@ -16,7 +18,8 @@ class JoggingRiwayat {
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> map = {
       'user_id': userId,
-      'datetime': datetime,
+      'datetime_start': datetimeStart,
+      'datetime_end': datetimeEnd,
       'jarak': jarak,
       'langkah': langkah,
     };
@@ -28,7 +31,8 @@ class JoggingRiwayat {
     return JoggingRiwayat(
       joggingId: map['jogging_id'],
       userId: map['user_id'],
-      datetime: map['datetime'],
+      datetimeStart: map['datetime_start'],
+      datetimeEnd: map['datetime_end'],
       jarak: (map['jarak'] as num?)?.toDouble(),
       langkah: map['langkah'],
     );

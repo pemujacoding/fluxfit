@@ -174,7 +174,10 @@ class _LevelPageState extends State<LevelPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("AI Chat", style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(
+            "Kalistenik ${widget.level}",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           backgroundColor: Colors.white,
           foregroundColor: Colors.blueAccent,
           elevation: 0,

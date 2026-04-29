@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluxfit/controllers/checkin_controller.dart';
+import 'package:fluxfit/controllers/jogging_riwayat_controller.dart';
 import 'package:fluxfit/controllers/kalistenik_riwayat_controller.dart';
 import 'package:fluxfit/session/session_helper.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -15,9 +16,11 @@ class _CalendarPageState extends State<CalendarPage> {
   CheckinController checkinController = CheckinController();
   KalisteniRiwayatController kalistenikController =
       KalisteniRiwayatController();
+  JoggingRiwayatController joggingController = JoggingRiwayatController();
 
   List<Map<String, dynamic>> checkins = [];
   List<Map<String, dynamic>> kalistenik = [];
+  List<Map<String, dynamic>> jogging = [];
 
   List<String> datesWithCheckin = [];
   DateTime _focusedDay = DateTime.now();
@@ -40,11 +43,16 @@ class _CalendarPageState extends State<CalendarPage> {
 
     final c = await checkinController.getCheckinByDate(userId, date);
     final k = await kalistenikController.getKalistenikByDate(userId, date);
-
+    final j = await joggingController.getJoggingByDate(userId, date);
     setState(() {
       checkins = c;
       kalistenik = k;
+      jogging = j;
     });
+
+    print("Checkin: $c");
+    print("Kalistenik: $k");
+    print("Jogging: $j");
   }
 
   Future<void> _loadCheckinDates() async {
@@ -184,6 +192,20 @@ class _CalendarPageState extends State<CalendarPage> {
                         await kalistenikController.delete(k['riwayat_id']);
                         _loadData();
                       }
+                    },
+                  ),
+                ),
+
+                ...jogging.map(
+                  (j) => _buildActivityItem(
+                    icon: Icons.directions_run,
+                    color: Colors.green,
+                    title: "Jogging ${j['jarak']} km (${j['langkah']} langkah)",
+                    time:
+                        "${_formatTime(j['datetime_start'])} - ${_formatTime(j['datetime_end'])}",
+                    onDelete: () async {
+                      await joggingController.deleteJogging(j['jogging_id']);
+                      _loadData();
                     },
                   ),
                 ),

@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:fluxfit/controllers/jogging_riwayat_controller.dart';
+import 'package:fluxfit/models/jogging_riwayat.dart';
+import 'package:fluxfit/session/session_helper.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -13,6 +16,7 @@ class WalkjogPage extends StatefulWidget {
 }
 
 class _WalkjogPageState extends State<WalkjogPage> {
+  JoggingRiwayatController joggingController = JoggingRiwayatController();
   GoogleMapController? mapController;
 
   // Perubahan: Gunakan Set Polyline untuk menampung segmen warna berbeda
@@ -124,13 +128,35 @@ class _WalkjogPageState extends State<WalkjogPage> {
         });
   }
 
-  void stopTracking() {
+  Future<void> stopTracking() async {
+    final userId = await SessionHelper.getUserId();
+
+    // 1. Simpan waktu selesai
+    DateTime sekarang = DateTime.now();
+
     setState(() {
-      endTime = DateTime.now();
+      endTime = sekarang;
       isTracking = false;
     });
+
+    // 2. Hentikan semua stream
     positionStream?.cancel();
     accelerometerStream?.cancel();
+
+    // 3. Simpan ke database dengan data yang benar
+    if (userId != null && startTime != null) {
+      await joggingController.insertJogging(
+        JoggingRiwayat(
+          userId: userId,
+          // Gunakan ISO String agar konsisten di database
+          datetimeStart: startTime!.toIso8601String(),
+          datetimeEnd: sekarang.toIso8601String(),
+          jarak: totalDistance, // Pastikan satuannya konsisten (meter atau km)
+          langkah:
+              stepCount, // Jangan lupa masukkan langkah kaki yang sudah kita buat tadi!
+        ),
+      );
+    }
   }
 
   @override
