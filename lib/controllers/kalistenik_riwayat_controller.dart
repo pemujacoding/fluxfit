@@ -42,4 +42,22 @@ class KalisteniRiwayatController {
       whereArgs: [id],
     );
   }
+
+  Future<List<Map<String, dynamic>>> getLast3Sessions(int userId) async {
+    final db = await _dbHelper.database;
+    return await db.rawQuery(
+      '''
+    SELECT 
+      kr.datetime,
+      kr.progress,
+      kl.nama AS level_nama
+    FROM kalistenik_riwayat kr
+    JOIN kalistenik_level kl ON kr.level_id = kl.level_id
+    WHERE kr.user_id = ?
+    ORDER BY kr.datetime DESC
+    LIMIT 3
+  ''',
+      [userId],
+    );
+  }
 }

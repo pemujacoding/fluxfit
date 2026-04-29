@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluxfit/models/checkin.dart';
-import 'package:fluxfit/pages/aichat_page.dart';
+import 'package:fluxfit/pages/airecomendation_page.dart';
 import 'package:fluxfit/pages/calendar_page.dart';
 import 'package:fluxfit/pages/calis_page.dart';
 import 'package:fluxfit/pages/game_page.dart';
@@ -125,7 +125,9 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AichatPage()),
+                MaterialPageRoute(
+                  builder: (context) => const AiRecommendationPage(),
+                ),
               );
             },
           ),

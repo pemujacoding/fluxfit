@@ -151,9 +151,8 @@ class _WalkjogPageState extends State<WalkjogPage> {
           // Gunakan ISO String agar konsisten di database
           datetimeStart: startTime!.toIso8601String(),
           datetimeEnd: sekarang.toIso8601String(),
-          jarak: totalDistance, // Pastikan satuannya konsisten (meter atau km)
-          langkah:
-              stepCount, // Jangan lupa masukkan langkah kaki yang sudah kita buat tadi!
+          jarak: totalDistance / 1000,
+          langkah: stepCount,
         ),
       );
     }

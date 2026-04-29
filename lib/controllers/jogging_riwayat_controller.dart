@@ -59,4 +59,15 @@ class JoggingRiwayatController {
       whereArgs: [id],
     );
   }
+
+  Future<List<Map<String, dynamic>>> getLast3Sessions(int userId) async {
+    final db = await _dbHelper.database;
+    return await db.query(
+      'jogging_riwayat',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'datetime_start DESC',
+      limit: 3,
+    );
+  }
 }
