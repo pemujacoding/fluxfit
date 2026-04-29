@@ -8,6 +8,8 @@ import 'package:fluxfit/pages/plan_page.dart';
 import 'package:fluxfit/pages/walkjog_page.dart';
 import 'package:fluxfit/controllers/checkin_controller.dart';
 import 'package:fluxfit/session/session_helper.dart';
+import 'package:fluxfit/pages/ai_recommendation_page.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -129,6 +131,22 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
+
+          _buildFeatureButton(
+            title: "AI Recommendation",
+            subtitle: "Rekomendasi latihan dari AI",
+            colors: [Colors.indigo, Colors.blueAccent],
+            icon: Icons.auto_awesome,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AiRecommendationPage(),
+                ),
+              );
+            },
+          ),
+
           _buildFeatureButton(
             title: "Planning",
             subtitle: "Tentukan budget dan jadwal latihanmu",
