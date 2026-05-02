@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluxfit/controllers/user_controller.dart';
 import 'package:fluxfit/models/user.dart';
-import 'package:fluxfit/pages/home_page.dart';
 import 'package:fluxfit/pages/main_screen.dart';
 import 'package:fluxfit/pages/signin_page.dart';
 import 'package:fluxfit/session/session_helper.dart';
@@ -16,9 +15,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   UserController userController = UserController();
   User? user;
-  // Pindahkan deklarasi ke luar build agar state terjaga
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   Future<void> _handleLogin() async {
     String username = _usernameController.text;
@@ -36,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context,) => MainScreen(username: _usernameController.text),
+          builder: (context) => MainScreen(username: _usernameController.text),
         ),
       );
     } else {
@@ -53,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background bersih
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -77,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 40),
 
-                // Form Section
+                // Username
                 TextField(
                   controller: _usernameController,
                   decoration: InputDecoration(
@@ -92,12 +91,27 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
+                // Password
                 TextField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: "Password",
                     prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                     filled: true,
                     fillColor: Colors.grey[100],
                     border: OutlineInputBorder(
@@ -108,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
 
-                // Button Section
+                // Login Button
                 SizedBox(
                   width: double.infinity,
                   height: 55,
@@ -120,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      elevation: 0, // Tanpa shadow yang berat
+                      elevation: 0,
                     ),
                     child: const Text(
                       "Login",

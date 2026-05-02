@@ -15,6 +15,7 @@ class _SigninPageState extends State<SigninPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
+  bool _obscurePassword = true;
 
   String? _selectedGender;
   DateTime? _selectedDate;
@@ -231,7 +232,6 @@ class _SigninPageState extends State<SigninPage> {
     );
   }
 
-  // Widget Helper untuk TextField
   Widget _buildTextField(
     TextEditingController controller,
     String hint,
@@ -240,10 +240,25 @@ class _SigninPageState extends State<SigninPage> {
   }) {
     return TextField(
       controller: controller,
-      obscureText: isPassword,
+      // Jika isPassword true, gunakan state _obscurePassword. Jika tidak, false (terlihat).
+      obscureText: isPassword ? _obscurePassword : false,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: Icon(icon, size: 20),
+        // Tambahkan suffixIcon hanya untuk field password
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              )
+            : null,
         filled: true,
         fillColor: Colors.grey[100],
         border: OutlineInputBorder(

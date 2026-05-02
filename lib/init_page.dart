@@ -17,7 +17,18 @@ class _InitPageState extends State<InitPage> {
   @override
   void initState() {
     super.initState();
-    initApp();
+    debugDB();
+  }
+
+  Future<void> debugDB() async {
+    final db = await DBHelper().database;
+
+    final data = await db.query('users');
+
+    print("ISI TABEL USERS:");
+    for (var row in data) {
+      print(row);
+    }
   }
 
   Future<void> initApp() async {

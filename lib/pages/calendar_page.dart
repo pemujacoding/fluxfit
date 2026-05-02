@@ -31,7 +31,7 @@ class _CalendarPageState extends State<CalendarPage> {
     super.initState();
     _selectedDay = _focusedDay;
 
-    _loadCheckinDates(); // 🔥 ini penting
+    _loadCheckinDates();
     _loadData();
   }
 
@@ -105,10 +105,9 @@ class _CalendarPageState extends State<CalendarPage> {
                   _focusedDay = focusedDay;
                 });
 
-                _loadData(); // 🔥 load data dari DB
+                _loadData(); 
               },
 
-              // 🔥 MARKER CHECKIN
               eventLoader: (day) {
                 final date = day.toIso8601String().substring(0, 10);
 

@@ -79,4 +79,13 @@ class UserController {
     final db = await _dbHelper.database;
     return await db.delete('users', where: 'user_id = ?', whereArgs: [id]);
   }
+
+  // update password lwt profile page
+  Future<int> updatePasswordSafe(String username, String newPassword) async {
+    // WAJIB: Hash dulu sebelum dikirim ke database
+    final hashedPassword = hashPassword(newPassword);
+
+    // Panggil helper untuk update
+    return await _dbHelper.updatePassword(username, hashedPassword);
+  }
 }

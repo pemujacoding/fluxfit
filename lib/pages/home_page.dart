@@ -119,18 +119,19 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          _buildFeatureButton(
-            title: "AI Chat",
-            subtitle: "Tanya program latihan",
-            colors: [Colors.purpleAccent, Colors.deepPurple],
-            icon: Icons.smart_toy,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AichatPage()),
-              );
-            },
-          ),
+          
+          // _buildFeatureButton(
+          //   title: "AI Chat",
+          //   subtitle: "Tanya program latihan",
+          //   colors: [Colors.purpleAccent, Colors.deepPurple],
+          //   icon: Icons.smart_toy,
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => const AichatPage()),
+          //     );
+          //   },
+          // ),
 
           _buildFeatureButton(
             title: "AI Recommendation",

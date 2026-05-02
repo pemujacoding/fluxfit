@@ -7,17 +7,20 @@ class KesanPesanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Kesan & Pesan"),
-        backgroundColor: Colors.blueAccent,
-        foregroundColor: Colors.white,
-        centerTitle: true,
+        title: const Text(
+          "Kesan dan Pesan",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blueAccent,
+        elevation: 0,
       ),
       body: Container(
         color: Colors.grey[50], // Background halus
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
-            _buildSectionHeader("Kesan Selama Perkuliahan"),
+            // _buildSectionHeader("Kesan Selama Perkuliahan"),
             _buildKesanCard(
               "Materi & Praktikum",
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -31,23 +34,23 @@ class KesanPesanPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            _buildSectionHeader("Pesan untuk Kedepannya"),
-            _buildPesanCard(
-              "Untuk Dosen & Asisten",
-              "Sunt in culpa qui officia deserunt mollit anim id est laborum. Section 1.10.32 of 'de Finibus Bonorum et Malorum', written by Cicero in 45 BC.",
-            ),
-            _buildPesanCard(
-              "Harapan Matkul",
-              "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.",
-            ),
+            // _buildSectionHeader("Pesan untuk Kedepannya"),
+            // _buildPesanCard(
+            //   "Untuk Dosen & Asisten",
+            //   "Sunt in culpa qui officia deserunt mollit anim id est laborum. Section 1.10.32 of 'de Finibus Bonorum et Malorum', written by Cicero in 45 BC.",
+            // ),
+            // _buildPesanCard(
+            //   "Harapan Matkul",
+            //   "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.",
+            // ),
 
-            const SizedBox(height: 30),
-            const Center(
-              child: Text(
-                "Fluxfit Project - 2026",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-            ),
+            // const SizedBox(height: 30),
+            // const Center(
+            //   child: Text(
+            //     "Fluxfit Project - 2026",
+            //     style: TextStyle(color: Colors.grey, fontSize: 12),
+            //   ),
+            // ),
           ],
         ),
       ),
