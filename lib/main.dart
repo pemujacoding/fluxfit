@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluxfit/controllers/init_controller.dart';
 import 'package:fluxfit/database/db_helper.dart';
-import 'package:fluxfit/pages/login_page.dart';
+import 'router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: '.env');  
+  await dotenv.load(fileName: '.env');
 
-  await DBHelper().database; // init DB
+  await DBHelper().database;
   await InitController().initDataKalistenik();
   await InitController().initDataLevel();
   await InitController().initDataKalistenikList();
@@ -21,10 +21,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Tambahkan MaterialApp di sini
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false, // Opsional: menghilangkan banner debug
-      home: LoginPage(),
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'FluxFit',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+      ),
+      routerConfig: router, // ← di sini
     );
   }
 }
