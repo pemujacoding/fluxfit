@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AiRecommendationService {
   final String _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
   final String _baseUrl =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
   Future<String> getRecommendation({
     required List<Map<String, dynamic>> checkInHistory,
@@ -56,7 +56,7 @@ class AiRecommendationService {
     final checkInSummary = checkInHistory.isEmpty
         ? "Belum ada check-in"
         : "${checkInHistory.length} hari check-in tercatat, "
-              "terakhir: ${checkInHistory.first['datetime']}";
+              "terakhir: ${checkInHistory.first['datetime_start']}";
 
     final joggingSummary = joggingHistory.isEmpty
         ? "Belum ada sesi jogging"
@@ -68,7 +68,7 @@ class AiRecommendationService {
                 final langkah = e['langkah'] != null
                     ? "${e['langkah']} langkah"
                     : "";
-                return "- ${e['datetime']}: $jarak${langkah.isNotEmpty ? ', $langkah' : ''}";
+                return "- ${e['datetime_start']}: $jarak${langkah.isNotEmpty ? ', $langkah' : ''}";
               })
               .join('\n');
 
@@ -77,7 +77,7 @@ class AiRecommendationService {
         : kalisthenicHistory
               .map(
                 (e) =>
-                    "- ${e['datetime']}: level ${e['level_nama']}, selesai ${e['progress']}%",
+                    "- ${e['datetime_start']}: level ${e['level_nama']}, selesai ${e['progress']}%",
               )
               .join('\n');
 

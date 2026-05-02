@@ -155,7 +155,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     icon: Icons.fitness_center,
                     color: Colors.blueAccent,
                     title:
-                        "Kalistenik ${k['level_nama']} (${k['progress'] * 100}%)",
+                        "Kalistenik ${k['level_nama']} ${(k['progress'] * 100).round()}%",
                     time: _formatTime(k['datetime']),
                     onDelete: () async {
                       final confirm = await showDialog(
@@ -199,8 +199,9 @@ class _CalendarPageState extends State<CalendarPage> {
                 ...jogging.map(
                   (j) => _buildActivityItem(
                     icon: Icons.directions_run,
-                    color: Colors.green,
-                    title: "Jogging ${j['jarak']} km (${j['langkah']} langkah)",
+                    color: Colors.blueAccent,
+                    title:
+                        "Jogging ${(j['jarak']).toStringAsFixed(2)} km (${j['langkah']} langkah)",
                     time:
                         "${_formatTime(j['datetime_start'])} - ${_formatTime(j['datetime_end'])}",
                     onDelete: () async {

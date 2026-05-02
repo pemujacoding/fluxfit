@@ -44,7 +44,7 @@ class JoggingRiwayatController {
       'jogging_riwayat',
       where: 'user_id = ?',
       whereArgs: [userId],
-      orderBy: 'datetime DESC',
+      orderBy: 'datetime_start DESC',
       limit: 3,
     );
   }
