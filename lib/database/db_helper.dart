@@ -145,4 +145,14 @@ class DBHelper {
     )
   ''');
   }
+
+  Future<int> updatePassword(String username, String newPassword) async {
+    final db = await database;
+    return await db.update(
+      'users',
+      {'password': newPassword},
+      where: 'username = ?',
+      whereArgs: [username],
+    );
+  }
 }

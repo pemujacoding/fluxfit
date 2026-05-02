@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluxfit/controllers/user_controller.dart';
 import 'package:fluxfit/models/user.dart';
 import 'package:fluxfit/pages/home_page.dart';
+import 'package:fluxfit/pages/main_screen.dart';
 import 'package:fluxfit/pages/signin_page.dart';
 import 'package:fluxfit/session/session_helper.dart';
 
@@ -35,9 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) {
-            return HomePage();
-          },
+          builder: (context,) => MainScreen(username: _usernameController.text),
         ),
       );
     } else {

@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluxfit/controllers/init_controller.dart';
 import 'package:fluxfit/database/db_helper.dart';
-import 'router.dart';
+import 'package:fluxfit/pages/login_page.dart';
+import 'package:fluxfit/pages/main_screen.dart'; // Pastikan import wrapper navigasi kamu
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: '.env');
 
-  await DBHelper().database;
+  await DBHelper().database; // init DB
   await InitController().initDataKalistenik();
   await InitController().initDataLevel();
   await InitController().initDataKalistenikList();
+
   runApp(const MainApp());
 }
 
@@ -21,14 +23,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'FluxFit',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-      ),
-      routerConfig: router, // ← di sini
+      // Halaman pertama yang muncul tetap Login
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginPage(),
+        // MainScreen adalah wrapper yang isinya 4 tab (Home, Game, Kesan, Profile)
+        '/main': (context) => const MainScreen(username: AutofillHints.username),
+      },
     );
   }
 }

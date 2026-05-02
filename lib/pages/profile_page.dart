@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import '../database/db_helper.dart'; // Pastikan path ini benar
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  final String username; // Menerima username dari MainScreen
+
+  const ProfilePage({super.key, required this.username});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  // Instance database helper
+  final DBHelper _dbHelper = DBHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +27,15 @@ class ProfilePage extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 48,
-                  backgroundImage: null, // ganti dengan foto user
-                  child: Icon(Icons.person, size: 48),
+                  backgroundColor: Colors.blueAccent,
+                  child: Icon(Icons.person, size: 48, color: Colors.white),
                 ),
                 Positioned(
                   bottom: 0,
                   right: 0,
                   child: CircleAvatar(
                     radius: 16,
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.orange,
                     child: IconButton(
                       icon: const Icon(
                         Icons.camera_alt,
@@ -32,7 +43,12 @@ class ProfilePage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        // TODO: image picker
+                        // Feedback sementara
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Fitur ganti foto segera hadir!"),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -43,17 +59,18 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 24),
 
           // ── Info akun ────────────────────────────────────
-          const Text('Akun', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'Data Akun',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           Card(
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.email_outlined),
-                  title: const Text('Email'),
-                  subtitle: const Text(
-                    'user@email.com',
-                  ), // ganti dengan data user
+                  leading: const Icon(Icons.person_outline),
+                  title: const Text('Username'),
+                  subtitle: Text(widget.username), // Menampilkan username login
                 ),
                 const Divider(height: 1),
                 ListTile(
@@ -83,7 +100,6 @@ class ProfilePage extends StatelessWidget {
   }
 
   void _showChangePasswordDialog(BuildContext context) {
-    final oldCtrl = TextEditingController();
     final newCtrl = TextEditingController();
     final confirmCtrl = TextEditingController();
 
@@ -94,11 +110,6 @@ class ProfilePage extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: oldCtrl,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Password lama'),
-            ),
             TextField(
               controller: newCtrl,
               obscureText: true,
@@ -119,9 +130,31 @@ class ProfilePage extends StatelessWidget {
             child: const Text('Batal'),
           ),
           FilledButton(
-            onPressed: () {
-              // TODO: logic ganti password
-              Navigator.pop(context);
+            onPressed: () async {
+              if (newCtrl.text.isNotEmpty && newCtrl.text == confirmCtrl.text) {
+                // Eksekusi Update ke Database
+                int result = await _dbHelper.updatePassword(
+                  widget.username,
+                  newCtrl.text,
+                );
+
+                if (result > 0) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Password berhasil diupdate!"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Password tidak cocok atau kosong!"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             child: const Text('Simpan'),
           ),
@@ -144,8 +177,12 @@ class ProfilePage extends StatelessWidget {
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              Navigator.pop(context);
-              // TODO: clear session & navigate ke login
+              // Hapus semua tumpukan halaman dan balik ke login
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                (route) => false,
+              );
             },
             child: const Text('Log Out'),
           ),
