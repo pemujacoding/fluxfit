@@ -7,6 +7,7 @@ import 'package:fluxfit/pages/game_page.dart';
 import 'package:fluxfit/pages/plan_page.dart';
 import 'package:fluxfit/pages/walkjog_page.dart';
 import 'package:fluxfit/controllers/checkin_controller.dart';
+import 'package:fluxfit/services/weather_service.dart';
 import 'package:fluxfit/session/session_helper.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,16 +18,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  CheckinController checkinController = CheckinController();
+  final CheckinController checkinController = CheckinController();
+
   bool isCheckedIn = false;
   List<bool> weeklyStatus = List.generate(7, (_) => false);
   List<String> days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
   final todayIndex = DateTime.now().weekday - 1; // Senin = 0
 
+  String temperature = "--";
+  String weatherDescription = "Memuat...";
+  String weatherIconCode = "01d";
+  bool isWeatherLoading = false;
+
   @override
   void initState() {
     super.initState();
     _loadCheckinData();
+    _getWeather();
   }
 
   Future<void> _loadCheckinData() async {
@@ -55,6 +63,21 @@ class _HomePageState extends State<HomePage> {
     await _loadCheckinData(); // refresh UI
   }
 
+  Future<void> _getWeather() async {
+    try {
+      final data = await WeatherService().fetchWeather();
+      setState(() {
+        temperature = data['main']['temp'].round().toString();
+        weatherDescription = data['weather'][0]['description'];
+        weatherIconCode = data['weather'][0]['icon'];
+      });
+    } catch (e) {
+      setState(() {
+        weatherDescription = "Gagal memuat cuaca";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,24 +87,16 @@ class _HomePageState extends State<HomePage> {
           "FluxFit",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: Colors.blueAccent,
         elevation: 0,
-        actions: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications_none),
-              ),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.person)),
-            ],
-          ),
-        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          _buildWeatherWidget(),
+          const SizedBox(height: 20),
           // Section Check-in Harian
           _buildCheckInCard(),
           const SizedBox(height: 30),
@@ -118,8 +133,8 @@ class _HomePageState extends State<HomePage> {
             },
           ),
           _buildFeatureButton(
-            title: "AI Chat",
-            subtitle: "Tanya program latihan",
+            title: "AI Coach",
+            subtitle: "Buat rekomendasi latihanmu",
             colors: [Colors.purpleAccent, Colors.deepPurple],
             icon: Icons.smart_toy,
             onTap: () {
@@ -134,24 +149,12 @@ class _HomePageState extends State<HomePage> {
           _buildFeatureButton(
             title: "Planning",
             subtitle: "Tentukan budget dan jadwal latihanmu",
-            colors: [Colors.pinkAccent, Colors.purple],
-            icon: Icons.list_rounded,
+            colors: [Colors.orangeAccent, Colors.redAccent],
+            icon: Icons.assignment_add,
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const PlanPage()),
-              );
-            },
-          ),
-          _buildFeatureButton(
-            title: "Game",
-            subtitle: "Mainkan permainan menarik",
-            colors: [Colors.orangeAccent, Colors.redAccent],
-            icon: Icons.videogame_asset,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const GamePage()),
               );
             },
           ),
@@ -323,6 +326,60 @@ class _HomePageState extends State<HomePage> {
               onTap: onTap,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeatherWidget() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.blueAccent.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Image.network(
+            "https://openweathermap.org/img/wn/$weatherIconCode@2x.png",
+            width: 50,
+            height: 50,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            // Use expanded so the text doesn't push the button off screen
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "$temperature°C di Yogyakarta",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  weatherDescription.toUpperCase(),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+          // THE REFRESH BUTTON
+          isWeatherLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : IconButton(
+                  icon: const Icon(
+                    Icons.refresh,
+                    size: 20,
+                    color: Colors.blueAccent,
+                  ),
+                  onPressed: _getWeather, // Call the function again
+                ),
         ],
       ),
     );

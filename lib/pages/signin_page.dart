@@ -11,7 +11,7 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
-  UserController userController = UserController();
+  final UserController userController = UserController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
@@ -70,22 +70,35 @@ class _SigninPageState extends State<SigninPage> {
 
       if (result == "USERNAME_EXISTS") {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Username sudah digunakan")),
+          const SnackBar(
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Username sudah dipakai"),
+          ),
         );
       } else if (result == null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Akun berhasil dibuat")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Akun berhasil dibuat"),
+          ),
+        );
         Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Terjadi kesalahan")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Terjadi Kesalahan"),
+          ),
+        );
       } // Kembali ke halaman Login
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
           content: Text("Mohon lengkapi semua data"),
         ),
       );

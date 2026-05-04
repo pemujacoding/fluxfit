@@ -65,18 +65,37 @@ class UserController {
     return result.isNotEmpty ? User.fromMap(result.first) : null;
   }
 
-  Future<int> updateUser(User user) async {
+  Future<int> updatePassword(String username, String newPassword) async {
     final db = await _dbHelper.database;
     return await db.update(
       'users',
-      user.toMap(),
-      where: 'user_id = ?', // Gunakan user_id sesuai model
-      whereArgs: [user.userId],
+      {'password': newPassword},
+      where: 'username = ?',
+      whereArgs: [username],
     );
+  }
+
+  Future<int> updatePasswordSafe(String username, String newPassword) async {
+    // WAJIB: Hash dulu sebelum dikirim ke database
+    final hashedPassword = hashPassword(newPassword);
+
+    // Panggil helper untuk update
+    return await updatePassword(username, hashedPassword);
   }
 
   Future<int> deleteUser(int id) async {
     final db = await _dbHelper.database;
     return await db.delete('users', where: 'user_id = ?', whereArgs: [id]);
+  }
+
+  Future<User?> getLastestUser() async {
+    final db = await _dbHelper.database;
+    // Use the helper, not raw SQL within db.query
+    final result = await db.query(
+      'users', // Table name
+      orderBy: 'user_id DESC', // Correct way to order in db.query
+      limit: 1, // Get only the top one
+    );
+    return result.isNotEmpty ? User.fromMap(result.first) : null;
   }
 }

@@ -9,14 +9,29 @@ class JadwalController {
     return db.insert('jadwal', data.toMap());
   }
 
-  Future<List<Jadwal>> getAll() async {
+  Future<List<Jadwal>> getAllbyUser(int userId) async {
     final db = await _dbHelper.database;
-    final res = await db.query('jadwal');
+    final res = await db.query(
+      'jadwal',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+    );
     return res.map((e) => Jadwal.fromMap(e)).toList();
   }
 
   Future<int> delete(int id) async {
     final db = await _dbHelper.database;
     return db.delete('jadwal', where: 'jadwal_id = ?', whereArgs: [id]);
+  }
+
+  Future<int> updateJadwaltName(String newName, int jadwalId) async {
+    final db = await _dbHelper.database;
+
+    return await db.update(
+      'jadwal',
+      {'nama': newName},
+      where: 'jadwal_id = ?',
+      whereArgs: [jadwalId],
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fluxfit/controllers/jogging_riwayat_controller.dart';
 import 'package:fluxfit/models/jogging_riwayat.dart';
+import 'package:fluxfit/services/notification_service.dart';
 import 'package:fluxfit/session/session_helper.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,7 +17,7 @@ class WalkjogPage extends StatefulWidget {
 }
 
 class _WalkjogPageState extends State<WalkjogPage> {
-  JoggingRiwayatController joggingController = JoggingRiwayatController();
+  final JoggingRiwayatController joggingController = JoggingRiwayatController();
   GoogleMapController? mapController;
 
   // Perubahan: Gunakan Set Polyline untuk menampung segmen warna berbeda
@@ -33,6 +34,8 @@ class _WalkjogPageState extends State<WalkjogPage> {
   DateTime? endTime;
   LatLng? initialPosition;
   bool isMapLoaded = false;
+
+  final Set<double> _reachedMilestones = {};
 
   @override
   void initState() {
@@ -81,6 +84,7 @@ class _WalkjogPageState extends State<WalkjogPage> {
       totalDistance = 0;
       _polylines.clear();
       _lastPoint = null;
+      _reachedMilestones.clear(); // Reset milestones for the new session
     });
 
     _startStepCounting();
@@ -89,26 +93,32 @@ class _WalkjogPageState extends State<WalkjogPage> {
         Geolocator.getPositionStream(
           locationSettings: const LocationSettings(
             accuracy: LocationAccuracy.high,
-            distanceFilter: 3, // Update lebih sering agar warna lebih akurat
+            distanceFilter: 3, // Fires every 3 meters moved
           ),
         ).listen((Position position) {
           LatLng newPoint = LatLng(position.latitude, position.longitude);
 
-          // Deteksi Kecepatan (m/s). 2.22 m/s kira-kira 8 km/jam
+          // Speed detection (1.5 m/s is roughly walking speed)
           bool isRunning = position.speed > 1.5;
           Color segmentColor = isRunning ? Colors.orange : Colors.blueAccent;
 
           setState(() {
             if (_lastPoint != null) {
-              // Tambahkan jarak
-              totalDistance += Geolocator.distanceBetween(
+              // 1. Calculate distance between points
+              double distanceBetweenPoints = Geolocator.distanceBetween(
                 _lastPoint!.latitude,
                 _lastPoint!.longitude,
                 newPoint.latitude,
                 newPoint.longitude,
               );
 
-              // Buat segmen garis baru setiap ada pergerakan
+              // 2. Update total distance
+              totalDistance += distanceBetweenPoints;
+
+              // 3. TRIGGER NOTIFICATION CHECK
+              _checkMilestones(totalDistance);
+
+              // 4. Update the Polyline on the map
               _polylines.add(
                 Polyline(
                   polylineId: PolylineId(position.timestamp.toString()),
@@ -124,6 +134,7 @@ class _WalkjogPageState extends State<WalkjogPage> {
             _lastPoint = newPoint;
           });
 
+          // Keep the camera following the user
           mapController?.animateCamera(CameraUpdate.newLatLng(newPoint));
         });
   }
@@ -155,6 +166,41 @@ class _WalkjogPageState extends State<WalkjogPage> {
           langkah: stepCount,
         ),
       );
+    }
+  }
+
+  void _checkMilestones(double currentDistanceMeters) {
+    // Define your targets in meters
+    final List<double> targets = [10, 100, 500, 1000, 5000, 10000];
+
+    for (double target in targets) {
+      if (currentDistanceMeters >= target &&
+          !_reachedMilestones.contains(target)) {
+        _reachedMilestones.add(target);
+
+        String title =
+            "Target Tercapai! ${currentDistanceMeters.toStringAsFixed(1)}m";
+        String message = "";
+
+        // Custom messages based on distance
+        if (target == 10) {
+          message = "Awal yang bagus! Kamu baru saja memulai perjalananmu.";
+        } else if (target == 500) {
+          message = "Setengah kilometer! Terus konsisten, kamu hebat!";
+        } else if (target >= 1000) {
+          message =
+              "Luar biasa! Kamu sudah menempuh ${(target / 1000).toStringAsFixed(0)} km.";
+        } else {
+          message = "Kamu sudah berlari sejauh ${target.toInt()} meter!";
+        }
+
+        // Call the service
+        NotificationService.showMilestoneNotification(
+          id: target.toInt(),
+          title: title,
+          body: message,
+        );
+      }
     }
   }
 

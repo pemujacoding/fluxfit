@@ -16,15 +16,13 @@ class Jadwal {
   });
 
   Map<String, dynamic> toMap() {
-    final Map<String, dynamic> map = {
+    return {
       'user_id': userId,
       'nama': nama,
       'start_time': startTime,
       'end_time': endTime,
       'hari': hari,
     };
-    if (jadwalId != null) map['jadwal_id'] = jadwalId!;
-    return map;
   }
 
   factory Jadwal.fromMap(Map<String, dynamic> map) {

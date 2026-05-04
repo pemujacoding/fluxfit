@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluxfit/controllers/user_controller.dart';
 import 'package:fluxfit/models/user.dart';
-import 'package:fluxfit/pages/home_page.dart';
+import 'package:fluxfit/pages/main_screen.dart';
 import 'package:fluxfit/pages/signin_page.dart';
+import 'package:fluxfit/services/biometric_service.dart';
 import 'package:fluxfit/session/session_helper.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  UserController userController = UserController();
+  final UserController userController = UserController();
   User? user;
   // Pindahkan deklarasi ke luar build agar state terjaga
   final TextEditingController _usernameController = TextEditingController();
@@ -35,9 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) {
-            return HomePage();
-          },
+          builder: (context) => MainScreen(username: _usernameController.text),
         ),
       );
     } else {
@@ -46,6 +45,50 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
           content: Text("Username atau password salah"),
+        ),
+      );
+    }
+  }
+
+  // Inside your Login State class
+  void _handleBiometricLogin() async {
+    bool isAvailable = await BiometricService.canCheckBiometrics();
+    final user = await userController.getLastestUser();
+    if (isAvailable) {
+      bool authenticated = await BiometricService.authenticate();
+
+      if (authenticated && user != null) {
+        await SessionHelper.saveUser(user.userId!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Login berhasil! Selamat datang kembali."),
+          ),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                MainScreen(username: _usernameController.text),
+          ),
+        );
+      } else {
+        // User cancelled or finger didn't match
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            content: Text("Autentikasi Gagal"),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          content: Text("Biometrik tidak tersedia di perangkat ini"),
         ),
       );
     }
@@ -134,6 +177,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 const SizedBox(height: 20),
+                Center(
+                  child: IconButton(
+                    onPressed: _handleBiometricLogin,
+                    icon: Icon(Icons.fingerprint_rounded),
+                    style: IconButton.styleFrom(
+                      iconSize: 45,
+                      foregroundColor: Colors.blueAccent,
+                      backgroundColor: Colors.grey[100],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Center(
                   child: TextButton(
                     onPressed: () {

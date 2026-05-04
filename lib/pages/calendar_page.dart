@@ -13,10 +13,9 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  CheckinController checkinController = CheckinController();
-  KalisteniRiwayatController kalistenikController =
-      KalisteniRiwayatController();
-  JoggingRiwayatController joggingController = JoggingRiwayatController();
+  final CheckinController checkinController = CheckinController();
+  final kalistenikController = KalisteniRiwayatController();
+  final JoggingRiwayatController joggingController = JoggingRiwayatController();
 
   List<Map<String, dynamic>> checkins = [];
   List<Map<String, dynamic>> kalistenik = [];
@@ -44,15 +43,12 @@ class _CalendarPageState extends State<CalendarPage> {
     final c = await checkinController.getCheckinByDate(userId, date);
     final k = await kalistenikController.getKalistenikByDate(userId, date);
     final j = await joggingController.getJoggingByDate(userId, date);
+
     setState(() {
       checkins = c;
       kalistenik = k;
       jogging = j;
     });
-
-    print("Checkin: $c");
-    print("Kalistenik: $k");
-    print("Jogging: $j");
   }
 
   Future<void> _loadCheckinDates() async {
@@ -96,6 +92,10 @@ class _CalendarPageState extends State<CalendarPage> {
               firstDay: DateTime.utc(2020),
               lastDay: DateTime.utc(2030),
               focusedDay: _focusedDay,
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+              ),
               selectedDayPredicate: (day) {
                 return isSameDay(_selectedDay, day);
               },
@@ -205,8 +205,39 @@ class _CalendarPageState extends State<CalendarPage> {
                     time:
                         "${_formatTime(j['datetime_start'])} - ${_formatTime(j['datetime_end'])}",
                     onDelete: () async {
-                      await joggingController.deleteJogging(j['jogging_id']);
-                      _loadData();
+                      final confirm = await showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text("Hapus Riwayat?"),
+                          content: const Text(
+                            "Data ini tidak bisa dikembalikan.",
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text(
+                                "Batal",
+                                style: TextStyle(color: Colors.blueAccent),
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.deepOrange,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text("Hapus"),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirm == true) {
+                        await joggingController.deleteJogging(j['jogging_id']);
+                        _loadData();
+                      }
                     },
                   ),
                 ),

@@ -13,8 +13,9 @@ class LevelPage extends StatefulWidget {
 }
 
 class _LevelPageState extends State<LevelPage> {
-  KalistenikListController listController = KalistenikListController();
-  KalisteniRiwayatController riwayatController = KalisteniRiwayatController();
+  final KalistenikListController listController = KalistenikListController();
+  final KalisteniRiwayatController riwayatController =
+      KalisteniRiwayatController();
 
   int currentStep = 0;
 
@@ -91,6 +92,7 @@ class _LevelPageState extends State<LevelPage> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("Akhiri Sesi?"),
         content: const Text(
@@ -132,6 +134,7 @@ class _LevelPageState extends State<LevelPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("Latihan Selesai! 🎉"),
         content: const Text(
@@ -203,8 +206,10 @@ class _LevelPageState extends State<LevelPage> {
 
             return Column(
               children: [
-                LinearProgressIndicator(value: progress),
-
+                LinearProgressIndicator(
+                  value: progress,
+                  color: Colors.blueAccent,
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
