@@ -48,7 +48,7 @@ class DBHelper {
       jogging_id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
       datetime_start TEXT NOT NULL,
-      datetime_end,
+      datetime_end TEXT,
       jarak REAL,
       langkah INTEGER,
       FOREIGN KEY (user_id) REFERENCES users(user_id)

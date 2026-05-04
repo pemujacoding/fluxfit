@@ -83,9 +83,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[50], // Background aplikasi yang soft
       appBar: AppBar(
-        title: const Text(
-          "FluxFit",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/fluxfit_logo.png',
+              height: 40,
+              width: 40,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 4),
+            const Text(
+              "FluxFit",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         centerTitle: true,
         backgroundColor: Colors.white,

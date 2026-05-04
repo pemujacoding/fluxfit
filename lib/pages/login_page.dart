@@ -105,6 +105,12 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Image.asset(
+                  'assets/images/fluxfit_logo.png',
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.contain,
+                ),
                 const Text(
                   'FluxFit',
                   style: TextStyle(
@@ -116,8 +122,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Silakan masuk untuk melanjutkan latihanmu hari ini.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  'Fitnesss dan Workout Rumahan',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 40),
 
